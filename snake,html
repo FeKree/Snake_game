@@ -3,10 +3,39 @@
 <head>
   <title>Snake Game</title>
   <style>
-    body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #f0f0f0; }
-    canvas { border: 2px solid black; }
-    #restart { margin-top: 10px; padding: 10px; font-size: 16px; cursor: pointer; }
-    #signature { margin-top: 10px; font-family: Arial, sans-serif; font-size: 14px; color: #333; }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #F5F5DC; /* Beige background */
+      font-family: Arial, sans-serif;
+    }
+    canvas {
+      border: 2px solid #4A7043; /* Dark green border */
+      background: #FFF8DC; /* Light beige canvas background */
+    }
+    #restart {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #4A7043; /* Green button */
+      color: #F5F5DC; /* Beige text */
+      border: none;
+      border-radius: 5px;
+      transition: background 0.3s;
+    }
+    #restart:hover {
+      background: #5D8A4F; /* Lighter green on hover */
+    }
+    #signature {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #4A7043; /* Green text */
+    }
   </style>
 </head>
 <body>
@@ -33,7 +62,7 @@
       if (gameOver) return;
 
       // Clear canvas
-      ctx.fillStyle = '#ddd';
+      ctx.fillStyle = '#FFF8DC'; /* Light beige canvas */
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Move snake
@@ -60,11 +89,11 @@
       }
 
       // Draw food
-      ctx.fillStyle = 'red';
+      ctx.fillStyle = '#E57373'; /* Soft coral for food */
       ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
 
       // Draw snake
-      ctx.fillStyle = 'green';
+      ctx.fillStyle = '#4A7043'; /* Green snake */
       snake.forEach(segment => {
         ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
       });
@@ -73,9 +102,10 @@
     function endGame() {
       gameOver = true;
       clearInterval(gameLoop);
-      ctx.fillStyle = 'black';
+      ctx.fillStyle = '#4A7043'; /* Green game over text */
       ctx.font = '30px Arial';
-      ctx.fillText('Game Over', canvas.width / 2 - 70, canvas.height / 2);
+      ctx.textAlign = 'center';
+      ctx.fillText('Game Over', canvas.width / 2, canvas.height / 2);
       restartButton.style.display = 'block';
     }
 
