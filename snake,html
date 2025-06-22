@@ -17,6 +17,11 @@
       border: 2px solid #4A7043; /* Dark green border */
       background: #FFF8DC; /* Light beige canvas background */
     }
+    #score {
+      margin-bottom: 10px;
+      font-size: 20px;
+      color: #4A7043; /* Green text */
+    }
     #restart {
       margin-top: 10px;
       padding: 10px 20px;
@@ -39,22 +44,22 @@
   </style>
 </head>
 <body>
+  <div id="score">Score: 0</div>
   <canvas id="gameCanvas" width="400" height="400"></canvas>
   <button id="restart" style="display: none;">Restart Game</button>
   <div id="signature">by 0fekree0</div>
   <script>
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
+    const scoreDisplay = document.getElementById('score');
     const restartButton = document.getElementById('restart');
     const gridSize = 20;
     const tileCount = canvas.width / gridSize;
-
-    let snake = [
-      { x: 10, y: 10 }
-    ];
+    let snake = [{ x: 10, y: 10 }];
     let food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
     let dx = 0;
     let dy = 0;
+    let score = 0;
     let gameOver = false;
     let gameLoop;
 
@@ -71,6 +76,8 @@
 
       // Check if snake eats food
       if (head.x === food.x && head.y === food.y) {
+        score += 1;
+        scoreDisplay.textContent = `Score: ${score}`;
         food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
       } else {
         snake.pop();
@@ -90,13 +97,33 @@
 
       // Draw food
       ctx.fillStyle = '#E57373'; /* Soft coral for food */
-      ctx.fillRect(food.x * gridSize, food.y * gridSize, gridSize - 2, gridSize - 2);
+      ctx.beginPath();
+      ctx.arc(food.x * gridSize + gridSize / 2, food.y * gridSize + gridSize / 2, gridSize / 2 - 2, 0, Math.PI * 2);
+      ctx.fill();
 
-      // Draw snake
-      ctx.fillStyle = '#4A7043'; /* Green snake */
-      snake.forEach(segment => {
-        ctx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize - 2, gridSize - 2);
+      // Draw snake with realistic styling
+      snake.forEach((segment, index) => {
+        ctx.fillStyle = index === 0 ? '#355E3A' : '#4A7043'; /* Darker green head, green body */
+        ctx.beginPath();
+        const radius = index === 0 ? gridSize / 2 : gridSize / 2 - (index / snake.length) * 2; /* Larger head, tapered tail */
+        ctx.arc(segment.x * gridSize + gridSize / 2, segment.y * gridSize + gridSize / 2, radius, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Add "eyes" on head
+        if (index === 0) {
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath();
+          ctx.arc(segment.x * gridSize + gridSize / 3, segment.y * gridSize + gridSize / 3, 2, 0, Math.PI * 2);
+          ctx.arc(segment.x * gridSize + gridSize * 2 / 3, segment.y * gridSize + gridSize / 3, 2, 0, Math.PI * 2);
+          ctx.fill();
+        }
       });
+
+      // Add subtle shadow for depth
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+      ctx.shadowBlur = 3;
+      ctx.shadowOffsetX = 2;
+      ctx.shadowOffsetY = 2;
     }
 
     function endGame() {
@@ -116,6 +143,7 @@
       dy = 0;
       gameOver = false;
       restartButton.style.display = 'none';
+      ctx.shadowBlur = 0; /* Reset shadow for game over text */
       gameLoop = setInterval(drawGame, 100);
     }
 
